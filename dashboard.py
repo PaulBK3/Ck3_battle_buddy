@@ -9,11 +9,9 @@ import matplotlib.pyplot as plt
 def dashboard(data):
     st.title("CK3 Battle Tracker Dashboard")
 
-    battles = json.load(data)
-
     # Flatten the JSON into a DataFrame
     rows = []
-    for battle in battles["battles"]:
+    for battle in data["battles"]:
         for side in battle["sides"]:
             for reg in side["regiments"]:
                 rows.append({

@@ -7,9 +7,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import dashboard
 
-INPUT_FILE = "battleinfo"
-SAVE_PATH = "test_save.ck3"
-OUTPUT_CSV = "ck3_battles.csv"
+#INPUT_FILE = "battleinfo"
+SAVE_PATH = "test_save2.ck3"
 
 def extract_gamestate(save_path):
     # Unzip the CK3 save to get the .gamestate file
@@ -24,9 +23,10 @@ def parse_battles(text):
     battles = {
         "battles": []
     }
-
+    combats = regex.findall(r'(combat_results)=(\{(?:[^(){}]+|(?2))*+\})', text, regex.DOTALL)
     # Each battle block like: 117440515={ ... }
-    battle_blocks = regex.findall(r'(\d+)=(\{(?:[^(){}]+|(?2))*+\})', text, regex.DOTALL)
+
+    battle_blocks = regex.findall(r'(\d+)=(\{(?:[^(){}]+|(?2))*+\})', combats[0][1], regex.DOTALL)
 
     for battle_id, block in battle_blocks:
         # Get location
@@ -74,19 +74,14 @@ def parse_battles(text):
 
 
 def main():
-    '''gamestate_path = extract_gamestate(SAVE_PATH)
+    gamestate_path = extract_gamestate(SAVE_PATH)
     if gamestate_path:
-        battles = parse_battles(gamestate_path)
-        if battles:
-            save_to_csv(battles, OUTPUT_CSV)
-            print(f"Extracted {len(battles)} battles → {OUTPUT_CSV}")
-        else:
-            print("No battles found in save.")
+         # Read and parse file
+        with open(gamestate_path, "r", encoding="utf-8") as f:
+            text = f.read()
     else:
-        print("Failed to extract .gamestate file.")'''
-    # Read and parse file
-    with open(INPUT_FILE, "r", encoding="utf-8") as f:
-        text = f.read()
+        print("Failed to extract .gamestate file.")
+   
 
     battles = parse_battles(text)
     # Flatten JSON into a DataFrame
